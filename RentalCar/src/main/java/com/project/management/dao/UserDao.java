@@ -123,6 +123,30 @@ public class UserDao {
         return false;
     }
 
+    public int loginUser(String email, String password){
+        //System.out.println(email);
+        Transaction transaction = null;
+        User user = null;
+        try(Session session = HibernateUtil.getSessionFactory().openSession()){
+            //start transaction
+            transaction = session.beginTransaction();
+            //get user obj
+            user = (User) session.createQuery("FROM User U WHERE U.email = :email AND U.password = :password").setParameter("email",email).setParameter("password",password).uniqueResult();
+            //System.out.println(user);
+            if(user != null)
+                return user.getId();
+
+            //commit transaction
+            transaction.commit();
+        }catch (Exception e){
+            if (transaction != null)
+                transaction.rollback();
+            e.printStackTrace();
+
+        }
+        return 0;
+    }
+
     //return all CUSTOMER User, NOT ADMIN need to create one other of all?
     @SuppressWarnings("unchecked")
     public static List < User > getAllUser() {

@@ -1,7 +1,7 @@
 package com.project.management.model;
 
 import javax.persistence.*;
-import java.sql.Date;
+import java.util.Date;
 
 @Entity
 @Table(name = "reservation")
@@ -13,16 +13,16 @@ public class Reservation {
     private int id;
 
     @Column(name = "startDate")
-    private java.sql.Date startDate;
+    private Date startDate;
 
     @Column(name = "endDate")
-    private java.sql.Date endDate;
+    private Date endDate;
 
     @ManyToOne(cascade = CascadeType.ALL, fetch = FetchType.EAGER)
     @JoinColumn(name = "user", referencedColumnName = "id")
     private User user;
 
-    @OneToOne
+    @ManyToOne(cascade = CascadeType.ALL, fetch =  FetchType.EAGER)
     @JoinColumn(name = "vehicle", referencedColumnName = "id")
     private Vehicle vehicle;
 
@@ -34,6 +34,14 @@ public class Reservation {
 
     public Reservation() {
 
+    }
+
+    public Vehicle getVehicle() {
+        return vehicle;
+    }
+
+    public void setVehicle(Vehicle vehicle) {
+        this.vehicle = vehicle;
     }
 
     public int getId() {

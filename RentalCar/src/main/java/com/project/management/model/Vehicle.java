@@ -1,6 +1,7 @@
 package com.project.management.model;
 
 import javax.persistence.*;
+import java.util.Set;
 
 @Entity
 @Table(name ="vehicle")
@@ -26,8 +27,8 @@ public class Vehicle {
     @Column(name = "licensePlate")
     private String licensePlate;
 
-    @OneToOne(mappedBy = "vehicle")
-    private Reservation reservation;
+    @OneToMany(mappedBy = "vehicle")
+    private Set<Reservation> reservation;
 
     public Vehicle() {
     }
@@ -95,5 +96,13 @@ public class Vehicle {
 
     public void setLicensePlate(String licensePlate) {
         this.licensePlate = licensePlate;
+    }
+
+    public Set<Reservation> getReservation() {
+        return reservation;
+    }
+
+    public void setReservation(Set<Reservation> reservation) {
+        this.reservation = reservation;
     }
 }

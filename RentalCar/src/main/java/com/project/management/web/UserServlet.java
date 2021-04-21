@@ -18,8 +18,8 @@ public class UserServlet extends HttpServlet {
     @Override
     protected void doGet(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
         String action = request.getParameter("action");
-        String name = request.getParameter("email");
-        String idSess = request.getParameter("userId");
+        String name = request.getParameter("sessionEmail");
+        String idSess = request.getParameter("sessionId");
         if (action == null)
             action = "list";
 
@@ -56,14 +56,30 @@ public class UserServlet extends HttpServlet {
     private void authenticate(HttpServletRequest request, HttpServletResponse response) throws Exception {
         String email = request.getParameter("email");
         String password = request.getParameter("password");
-        HttpSession session = request.getSession();
-        session.setAttribute("email", email);
-        session.setAttribute("action", "list");
-        if (UserDao.validate(email, password)) {
+        UserDao loginDao = new UserDao();
+        if (loginDao.loginUser(email,password) != 0){
+            HttpSession session = request.getSession();
+            session.setAttribute("sessionId", loginDao.loginUser(email,password));
+            session.setAttribute("sessionEmail",email);
+            if (loginDao.isAdmin(email,password)){
+                response.sendRedirect("UserServlet");
+            }else{
+                response.sendRedirect("ReservationServlet");
+            }
+        }else {
+            response.setContentType("text/html");
+            PrintWriter out = response.getWriter();
+            out.print("Sorry email not found");
+
+            RequestDispatcher dispatcher = request.getRequestDispatcher("login.jsp");
+            dispatcher.include(request, response);
+            //throw new Exception("Login Failed");
+        }
+        /*if (UserDao.validate(email, password)) {
             //System.out.println(UserDao.isAdmin(email,password));
             if (UserDao.isAdmin(email, password)) {
-                /*RequestDispatcher dispatcher = request.getRequestDispatcher("UserServlet");
-                dispatcher.forward(request,response);*/
+                RequestDispatcher dispatcher = request.getRequestDispatcher("UserServlet");
+                dispatcher.forward(request,response);
                 response.sendRedirect("UserServlet");
             } else {
                 RequestDispatcher dispatcher = request.getRequestDispatcher("customer/homepage-customer.jsp");
@@ -78,7 +94,7 @@ public class UserServlet extends HttpServlet {
             RequestDispatcher dispatcher = request.getRequestDispatcher("login.jsp");
             dispatcher.include(request, response);
             //throw new Exception("Login Failed");
-        }
+        }*/
     }
 
 
