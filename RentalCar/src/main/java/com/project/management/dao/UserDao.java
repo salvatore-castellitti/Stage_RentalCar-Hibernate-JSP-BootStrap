@@ -151,22 +151,11 @@ public class UserDao {
     @SuppressWarnings("unchecked")
     public static List < User > getAllUser() {
 
-        Transaction transaction = null;
-        List < User > listOfUser = new ArrayList<>();
+        List < User > listOfUser;
         try (Session session = HibernateUtil.getSessionFactory().openSession()) {
-            // start a transaction
-            transaction = session.beginTransaction();
-            // get an user object
 
             listOfUser = session.createQuery(" from User U where U.role = false").getResultList();
 
-            // commit transaction
-            transaction.commit();
-        } catch (Exception e) {
-            if (transaction != null) {
-                transaction.rollback();
-            }
-            e.printStackTrace();
         }
         return listOfUser;
     }
@@ -196,25 +185,5 @@ public class UserDao {
         return false;
     }
 
-    //just a try, useless and broke
-    public static List<User[]> retrieveUser(){
-        Transaction transaction = null;
-        List < User[] > listOfUser = null;
-        try (Session session = HibernateUtil.getSessionFactory().openSession()) {
-            // start a transaction
-            transaction = session.beginTransaction();
-            // get an user object
 
-            listOfUser = session.createQuery("select name, surname, email, taxCode, birthday from User").getResultList();
-
-            // commit transaction
-            transaction.commit();
-        } catch (Exception e) {
-            if (transaction != null) {
-                transaction.rollback();
-            }
-            e.printStackTrace();
-        }
-        return listOfUser;
-    }
 }

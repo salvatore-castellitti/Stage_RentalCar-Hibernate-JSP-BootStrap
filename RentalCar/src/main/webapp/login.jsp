@@ -9,15 +9,36 @@
 <html>
 
 <head>
+
     <title>Login</title>
+    <link href="webjars/bootstrap/4.6.0/css/bootstrap.min.css" rel="stylesheet" />
+    <script src="webjars/bootstrap/4.6.0/js/bootstrap.min.js" ></script>
+    <script src="webjars/jquery/3.6.0/jquery.min.js" ></script>
+
 </head>
 <body>
-    <form action="UserServlet" method="GET">
-        <input type="hidden" name="action" value="login">
-        Email: <input type="text" name="email" required/><br>
-        Password: <input type="text" name="password" required/><br>
-        <button type="submit">Submit</button>
-    </form>
+    <div class="row justify-content-center">
+        <div class="col-auto">
+            <div class="row justify-content-center">
+                <h3> Project A - The best Rental Car</h3>
+            </div>
+            <div class="row justify-content-center">
+                <h4>Login</h4>
+            </div>
+            <form action="UserServlet" method="GET" class="card p-4 form-group">
+                <input type="hidden" name="action" value="login"><br>
 
+                <label for="email" class="form-label">E-mail</label>
+                <input type="text" name="email" id="email" class="form-control" required/>
+
+                <label for="password" class="form-label">Password</label>
+                <input type="text" name="password" id="password" class="form-control" required/><br>
+
+                <div class="row justify-content-center">
+                    <button type="submit" class="btn btn-secondary mt-4">Submit</button>
+                </div>
+            </form>
+        </div>
+    </div>
 </body>
 </html>

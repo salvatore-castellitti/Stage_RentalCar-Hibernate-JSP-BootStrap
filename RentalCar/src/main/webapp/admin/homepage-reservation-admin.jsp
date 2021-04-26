@@ -4,7 +4,7 @@
 <%@ page contentType="text/html;charset=UTF-8" language="java" %>
 <html>
 <head>
-    <title>Homepage Vehicle</title>
+    <title>Homepage Reservation</title>
     <link href="webjars/bootstrap/4.6.0/css/bootstrap.min.css" rel="stylesheet" />
     <script src="webjars/bootstrap/4.6.0/js/bootstrap.min.js" ></script>
     <script src="webjars/jquery/3.6.0/jquery.min.js" ></script>
@@ -40,47 +40,50 @@
 
     <div class="row justify-content-center">
         <div class="col-auto">
-            <table class="table table-bordered">
-                <thead class="thead-dark">
-                    <tr>
-                        <th scope="col">id</th>
-                        <th scope="col">type</th>
-                        <th scope="col">houseproducer</th>
-                        <th scope="col">model</th>
-                        <th scope="col">Action</th>
-                    </tr>
-                </thead>
-
-                <c:forEach var="car" items="${CARS_LIST}" >
-                    <tr>
-                        <td>${car.id}</td>
-                        <td>${car.type}</td>
-                        <td>${car.houseProducer}</td>
-                        <td>${car.model}</td>
-                        <td>
+            <table  class="table table-bordered">
+        <thead class="thead-dark">
+            <tr>
+                <th scope="col">Customer</th>
+                <th scope="col">Vehicle</th>
+                <th scope="col">Start Date</th>
+                <th scope="col">End</th>
+                <th scope="col">Action</th>
+            </tr>
+        </thead>
+        <c:forEach var="reserv" items="${RESERVATION_LIST}" >
+            <tr>
+                <td>${reserv.user.name} ${reserv.user.surname}</td>
+                <td>${reserv.vehicle.houseProducer} ${reserv.vehicle.model} ${reserv.vehicle.licensePlate}</td>
+                <td>${reserv.startDate}</td>
+                <td>${reserv.endDate}</td>
+                <td>
+                    <c:choose>
+                        <c:when test="${reserv.confirmed}">
+                            Confirmed
+                        </c:when>
+                        <c:otherwise>
                             <div style="display: flex;">
-                                <form action="CarReservationServlet" method="GET">
-                                    <input type="hidden" name="action" value="update"/>
-                                    <input type="hidden" name="carId" value="${car.id}"/>
-                                    <input type="submit" value="update" class="btn btn-secondary mr-1"/>
+                                <form action="CarReservationServlet" method="POST">
+                                    <input type="hidden" name="action" value="updateReservation"/>
+                                    <input type="hidden" name="reservConfirm" value="true"/>
+                                    <input type="hidden" name="reservationId" value="${reserv.id}"/>
+                                    <input type="submit" value="update" class="btn btn-secondary"/>
                                 </form>
                                 <form action="CarReservationServlet" method="POST">
-                                    <input type="hidden" name="action" value="delete"/>
-                                    <input type="hidden" name="carId" value="${car.id}"/>
+                                    <input type="hidden" name="action" value="deleteReservation"/>
+                                    <input type="hidden" name="reservId" value="${reserv.id}"/>
                                     <input type="submit" value="delete" onclick="return confirm('Are you sure you want delete this Vehicle?')" class="btn btn-secondary"/>
                                 </form>
                             </div>
-                        </td>
-                    </tr>
-                </c:forEach>
-            </table>
+                        </c:otherwise>
+                    </c:choose>
+                </td>
+            </tr>
+        </c:forEach>
+
+    </table>
         </div>
     </div>
-    <div class="row justify-content-center">
-        <form action="CarReservationServlet" method="GET">
-          <input type="hidden" name="action" value="create">
-          <button type="submit" class="btn btn-secondary">Create new Vehicle</button>
-      </form>
-    </div>
+
 </body>
 </html>

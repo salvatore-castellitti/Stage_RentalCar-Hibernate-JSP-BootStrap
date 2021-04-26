@@ -18,11 +18,14 @@ public class Reservation {
     @Column(name = "endDate")
     private Date endDate;
 
-    @ManyToOne(cascade = CascadeType.ALL, fetch = FetchType.EAGER)
+    @Column(name= "confirmed")
+    private boolean confirmed;
+
+    @ManyToOne(cascade = CascadeType.REFRESH, fetch = FetchType.EAGER)
     @JoinColumn(name = "user", referencedColumnName = "id")
     private User user;
 
-    @ManyToOne(cascade = CascadeType.ALL, fetch =  FetchType.EAGER)
+    @ManyToOne(cascade = CascadeType.REFRESH, fetch =  FetchType.EAGER)
     @JoinColumn(name = "vehicle", referencedColumnName = "id")
     private Vehicle vehicle;
 
@@ -76,5 +79,11 @@ public class Reservation {
         this.user = user;
     }
 
+    public boolean isConfirmed() {
+        return confirmed;
+    }
 
+    public void setConfirmed(boolean confirmed) {
+        this.confirmed = confirmed;
+    }
 }

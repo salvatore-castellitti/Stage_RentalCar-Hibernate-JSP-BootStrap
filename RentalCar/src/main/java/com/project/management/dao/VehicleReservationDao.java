@@ -5,7 +5,10 @@ import com.project.management.utl.HibernateUtil;
 import org.hibernate.Session;
 import org.hibernate.Transaction;
 
+import java.text.ParseException;
+import java.text.SimpleDateFormat;
 import java.util.ArrayList;
+import java.util.Date;
 import java.util.List;
 
 
@@ -74,7 +77,7 @@ public class VehicleReservationDao {
         }
     }
 
-    //return Vehile passing his id NB need to Integer.parseInt()
+    //return Vehicle passing his id NB need to Integer.parseInt()
     public Vehicle getVehicle(int id) {
 
         Transaction transaction = null;
@@ -99,6 +102,19 @@ public class VehicleReservationDao {
     @SuppressWarnings("unchecked")
     public static List < Vehicle > getAllVehicle() {
 
+        List < Vehicle > listOfVehicle;
+        try (Session session = HibernateUtil.getSessionFactory().openSession()) {
+
+            //get a list of Vehicle
+            listOfVehicle = session.createQuery(" from Vehicle").getResultList();
+
+        }
+        return listOfVehicle;
+    }
+
+    //return all Vehicles that are free in chosen period
+    @SuppressWarnings("unchecked")
+    public static List < Vehicle > getFreeVehicle(Date date) throws ParseException {
         Transaction transaction = null;
         List < Vehicle > listOfVehicle = new ArrayList<>();
         try (Session session = HibernateUtil.getSessionFactory().openSession()) {
@@ -106,7 +122,7 @@ public class VehicleReservationDao {
             transaction = session.beginTransaction();
 
             //get a list of Vehicle
-            listOfVehicle = session.createQuery(" from Vehicle").getResultList();
+            listOfVehicle = session.createQuery(" from Vehicle where id not in (select ve.id from Vehicle as ve join ve.reservation as verRes  where verRes.endDate > :startDate)").setParameter("startDate",date).getResultList();
 
             // commit transaction
             transaction.commit();

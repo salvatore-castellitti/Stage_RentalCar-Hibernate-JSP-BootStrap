@@ -27,7 +27,7 @@ public class Vehicle {
     @Column(name = "licensePlate")
     private String licensePlate;
 
-    @OneToMany(mappedBy = "vehicle")
+    @OneToMany(mappedBy = "vehicle", cascade = CascadeType.ALL)
     private Set<Reservation> reservation;
 
     public Vehicle() {

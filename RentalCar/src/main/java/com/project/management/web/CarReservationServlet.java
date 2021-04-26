@@ -1,33 +1,64 @@
 package com.project.management.web;
 
+import com.project.management.dao.ReservationDao;
 import com.project.management.dao.VehicleReservationDao;
+import com.project.management.model.Reservation;
 import com.project.management.model.Vehicle;
 
 import javax.servlet.*;
 import javax.servlet.http.*;
 import javax.servlet.annotation.*;
 import java.io.IOException;
+import java.text.ParseException;
+import java.text.SimpleDateFormat;
+import java.util.Calendar;
+import java.util.Date;
 import java.util.List;
 
 @WebServlet(name = "CarReservationServlet", value = "/CarReservationServlet")
 public class CarReservationServlet extends HttpServlet {
     @Override
     protected void doGet(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
+        HttpSession session = request.getSession(false);
         String action = request.getParameter("action");
-        if (action == null)
-            action = "list";
+        System.out.println(action);
+        if (action == null){
+            if (session.getAttribute("actionList")!=null) {
+                action = (String)session.getAttribute("actionList");
+            }else {
+                action = "list";
+            }
+        }
+        System.out.println(action);
 
         switch (action){
 
             case "update":
                 updateVehicleForm(request,response);
+                break;
 
             case "create":
                 createVehicleForm(request,response);
+                break;
+
+            case "listReservation":
+                listReservationAdmin(request,response);
+                break;
+
 
             default:
                 listVehicle(request,response);
         }
+    }
+
+    private void listReservationAdmin(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
+        ReservationDao reservationDao = new ReservationDao();
+        List<Reservation> reservations = reservationDao.getAllReservation();
+
+        request.setAttribute("RESERVATION_LIST",reservations);
+
+        RequestDispatcher dispatcher = request.getRequestDispatcher("admin/homepage-reservation-admin.jsp");
+        dispatcher.forward(request,response);
     }
 
     private void updateVehicleForm(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
@@ -45,10 +76,11 @@ public class CarReservationServlet extends HttpServlet {
         dispatcher.forward(request,response);
     }
 
-    private void listVehicle(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
+    public void listVehicle(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
         List<Vehicle> cars = VehicleReservationDao.getAllVehicle();
 
         request.setAttribute("CARS_LIST", cars);
+
 
         RequestDispatcher dispatcher = request.getRequestDispatcher("admin/homepage-car-admin.jsp");
         dispatcher.forward(request,response);
@@ -59,14 +91,33 @@ public class CarReservationServlet extends HttpServlet {
         String action = request.getParameter("action");
         switch(action){
             case "create":
-                createVehicle(request,response);
-                break;
             case "update":
-                updateVehicle(request,response);
+                CreateUpdateVehicle(request,response);
                 break;
             case "delete":
                 deleteVehicle(request,response);
+                break;
+            case "updateReservation":
+                updateReservation(request,response);
+                break;
+            case "deleteReservation":
+                deleteReservation(request,response);
         }
+    }
+
+    private void updateReservation(HttpServletRequest request, HttpServletResponse response) throws IOException {
+        HttpSession session = request.getSession(false);
+        ReservationDao reservationDao = new ReservationDao();
+        Reservation reservation = reservationDao.getReservation(Integer.parseInt(request.getParameter("reservationId")));
+
+
+        Boolean bool =  Boolean.parseBoolean(request.getParameter("reservConfirm"));
+        reservation.setConfirmed(bool);
+
+        reservationDao.updateReservation(reservation);
+        session.setAttribute("actionList","listReservation");
+        response.sendRedirect("CarReservationServlet");
+
     }
 
     private void deleteVehicle(HttpServletRequest request, HttpServletResponse response) throws IOException {
@@ -76,11 +127,29 @@ public class CarReservationServlet extends HttpServlet {
         response.sendRedirect("CarReservationServlet");
     }
 
-    private void updateVehicle(HttpServletRequest request, HttpServletResponse response) throws IOException {
-        VehicleReservationDao updateDao = new VehicleReservationDao();
-        Vehicle car = new Vehicle();
-        int id = Integer.parseInt(request.getParameter("carId"));
-        car = updateDao.getVehicle(id);
+    private void deleteReservation(HttpServletRequest request, HttpServletResponse response) throws IOException, ServletException {
+        HttpSession session = request.getSession(false);
+        ReservationDao reservationDao = new ReservationDao();
+        int id = Integer.parseInt(request.getParameter("reservId"));
+
+        reservationDao.deleteReservation(id);
+        session.setAttribute("actionList","listReservation");
+        response.sendRedirect("CarReservationServlet");
+
+    }
+
+    private void CreateUpdateVehicle(HttpServletRequest request, HttpServletResponse response) throws IOException {
+        HttpSession session = request.getSession(false);
+        session.setAttribute("actionList","list");
+        VehicleReservationDao vehicleReservationDao = new VehicleReservationDao();
+        Vehicle car = null;
+        if (request.getParameter("carID")!=null){
+            int id = Integer.parseInt(request.getParameter("carId"));
+            car = vehicleReservationDao.getVehicle(id);
+        }else{
+            car = new Vehicle();
+        }
+
 
         if (request.getParameter("type") != "")
             car.setType(request.getParameter("type"));
@@ -97,22 +166,13 @@ public class CarReservationServlet extends HttpServlet {
         if (request.getParameter("licenseplate") != "")
             car.setLicensePlate(request.getParameter("licenseplate"));
 
-        updateDao.updateVehicle(car);
+        if (request.getParameter("carId")!=null){
+            vehicleReservationDao.updateVehicle(car);
+        }else{
+            VehicleReservationDao.saveVehicle(car);
+        }
 
         response.sendRedirect("CarReservationServlet");
     }
 
-    private void createVehicle(HttpServletRequest request, HttpServletResponse response) throws IOException {
-        VehicleReservationDao createDao = new VehicleReservationDao();
-        Vehicle vehicle = new Vehicle();
-
-        vehicle.setType(request.getParameter("type"));
-        vehicle.setHouseProducer(request.getParameter("houseproducer"));
-        vehicle.setModel(request.getParameter("model"));
-        vehicle.setRegistrationYear(request.getParameter("registrationyear"));
-        vehicle.setLicensePlate(request.getParameter("licenseplate"));
-
-        createDao.saveVehicle(vehicle);
-        response.sendRedirect("CarReservationServlet");
-    }
 }

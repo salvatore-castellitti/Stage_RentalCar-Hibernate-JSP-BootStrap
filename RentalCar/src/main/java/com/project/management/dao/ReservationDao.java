@@ -11,16 +11,16 @@ import java.util.ArrayList;
 import java.util.List;
 
 
-//CRUD Vehicle
+//CRUD Reservation
 public class ReservationDao {
 
-    //add Vehicle in the DB
+    //add Reservation in the DB
     public static void saveReservation(Reservation reservation) {
         Transaction transaction = null;
         try (Session session = HibernateUtil.getSessionFactory().openSession()) {
             // start a transaction
             transaction = session.beginTransaction();
-            // save the REservation object
+            // save the Reservation object
             session.save(reservation);
             // commit transaction
             transaction.commit();
@@ -33,13 +33,13 @@ public class ReservationDao {
     }
 
 
-    //update Vehicle NB the blank field == "" (NOT null)
+    //update Reservation NB the blank field == "" (NOT null)
     public void updateReservation(Reservation reservation) {
         Transaction transaction = null;
         try (Session session = HibernateUtil.getSessionFactory().openSession()) {
             // start a transaction
             transaction = session.beginTransaction();
-            // save the Vehicle object
+            // save the Reservation object
             session.update(reservation);
             // commit transaction
             transaction.commit();
@@ -51,7 +51,7 @@ public class ReservationDao {
         }
     }
 
-    //delete Vehicle by id NB need to Integer.parseInt()
+    //delete Reservation by id NB need to Integer.parseInt()
     public void deleteReservation(int id) {
 
         Transaction transaction = null;
@@ -59,11 +59,11 @@ public class ReservationDao {
             // start a transaction
             transaction = session.beginTransaction();
 
-            // Delete a vehicle object
-            Vehicle vehicle = session.get(Vehicle.class, id);
-            if (vehicle != null) {
-                session.delete(vehicle);
-                System.out.println("user is deleted");
+            // Delete a reservation object
+            Reservation reservation = session.get(Reservation.class, id);
+            if (reservation != null) {
+                session.delete(reservation);
+                System.out.println("reservation is deleted");
             }
 
             // commit transaction
@@ -76,7 +76,7 @@ public class ReservationDao {
         }
     }
 
-    //return Vehile passing his id NB need to Integer.parseInt()
+    //return Reservation passing his id NB need to Integer.parseInt()
     public Reservation getReservation(int id) {
 
         Transaction transaction = null;
@@ -84,7 +84,7 @@ public class ReservationDao {
         try (Session session = HibernateUtil.getSessionFactory().openSession()) {
             // start a transaction
             transaction = session.beginTransaction();
-            // get an VEHICLE object
+            // get an Reservation object
             reservation = session.get(Reservation.class, id);
             // commit transaction
             transaction.commit();
@@ -97,29 +97,26 @@ public class ReservationDao {
         return reservation;
     }
 
-    //return all Vehicles
+    //return all Reservation from a specific user
     @SuppressWarnings("unchecked")
     public static List <Reservation> getAllReservation(int id) {
 
-        //System.out.println(id);
         UserDao userDao = new UserDao();
         User user = userDao.getUser(id);
-        Transaction transaction = null;
-        List < Reservation > listOfReservation = new ArrayList<>();
+
+        List < Reservation > listOfReservation;
         try (Session session = HibernateUtil.getSessionFactory().openSession()) {
-            // start a transaction
-            transaction = session.beginTransaction();
 
-            //get a list of Vehicle
             listOfReservation = session.createQuery(" from Reservation R WHERE R.user = :user ").setParameter("user",user).getResultList();
+        }
+        return listOfReservation;
+    }
 
-            // commit transaction
-            transaction.commit();
-        } catch (Exception e) {
-            if (transaction != null) {
-                transaction.rollback();
-            }
-            e.printStackTrace();
+    public static List <Reservation> getAllReservation() {
+
+        List < Reservation > listOfReservation;
+        try (Session session = HibernateUtil.getSessionFactory().openSession()) {
+            listOfReservation = session.createQuery(" from Reservation order by vehicle.id,endDate").getResultList();
         }
         return listOfReservation;
     }

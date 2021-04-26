@@ -38,8 +38,7 @@ public class User {
     private boolean role;
     //true= admin, false=customer
 
-    @OneToMany(mappedBy = "user")
-    //@Column(name = "reservations")
+    @OneToMany(mappedBy = "user", cascade = CascadeType.ALL)
     private Set<Reservation> reservation;
 
 
