@@ -20,7 +20,7 @@
     <div class="row justify-content-center">
         <div class="col-auto">
             <div class="row justify-content-center">
-                <h3> Project A - The best Rental Car</h3>
+                <h3> Project A - The best Rental Car Service</h3>
             </div>
             <div class="row justify-content-center">
                 <h4>Login</h4>

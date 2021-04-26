@@ -43,20 +43,21 @@
             <table class="table table-bordered">
                 <thead class="thead-dark">
                     <tr>
-                        <th scope="col">id</th>
-                        <th scope="col">type</th>
-                        <th scope="col">houseproducer</th>
-                        <th scope="col">model</th>
+                        <th scope="col">Type</th>
+                        <th scope="col">House Producer</th>
+                        <th scope="col">Model</th>
+                        <th scope="col">License Plate</th>
                         <th scope="col">Action</th>
                     </tr>
                 </thead>
 
                 <c:forEach var="car" items="${CARS_LIST}" >
                     <tr>
-                        <td>${car.id}</td>
                         <td>${car.type}</td>
                         <td>${car.houseProducer}</td>
                         <td>${car.model}</td>
+                        <td>${car.licensePlate}</td>
+
                         <td>
                             <div style="display: flex;">
                                 <form action="CarReservationServlet" method="GET">

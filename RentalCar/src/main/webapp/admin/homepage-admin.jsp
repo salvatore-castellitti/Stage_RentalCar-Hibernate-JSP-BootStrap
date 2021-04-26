@@ -43,18 +43,20 @@
             <table class="table table-bordered">
                 <thead class="thead-dark">
                     <tr>
-                        <th scope="col">User id</th>
                         <th scope="col">Name</th>
                         <th scope="col">Surname</th>
-                        <th scope="col">email</th>
+                        <th scope="col">Birthday</th>
+                        <th scope="col">Tax Code</th>
+                        <th scope="col">E-Mail</th>
                         <th scope="col">Action</th>
                     </tr>
                 </thead>
                 <c:forEach var="user" items="${USER_LIST}" >
                     <tr>
-                        <td>${user.id}</td>
                         <td>${user.name}</td>
                         <td>${user.surname}</td>
+                        <td>${user.birthday}</td>
+                        <td>${user.taxCode}</td>
                         <td>${user.email}</td>
                         <td>
                             <div style="display: flex;">
