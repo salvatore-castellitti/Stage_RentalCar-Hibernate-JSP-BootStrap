@@ -12,7 +12,7 @@ import java.util.Date;
 import java.util.List;
 
 
-//CRUD Vehicle
+//CRUD Vehicle and Reservation
 public class VehicleReservationDao {
 
     //add Vehicle in the DB
@@ -35,7 +35,7 @@ public class VehicleReservationDao {
 
 
     //update Vehicle NB the blank field == "" (NOT null)
-    public void updateVehicle(Vehicle vehicle) {
+    public static void updateVehicle(Vehicle vehicle) {
         Transaction transaction = null;
         try (Session session = HibernateUtil.getSessionFactory().openSession()) {
             // start a transaction
@@ -64,7 +64,7 @@ public class VehicleReservationDao {
             Vehicle vehicle = session.get(Vehicle.class, id);
             if (vehicle != null) {
                 session.delete(vehicle);
-                System.out.println("user is deleted");
+                System.out.println("Vehicle is deleted");
             }
 
             // commit transaction
@@ -101,13 +101,22 @@ public class VehicleReservationDao {
     //return all Vehicles
     @SuppressWarnings("unchecked")
     public static List < Vehicle > getAllVehicle() {
-
-        List < Vehicle > listOfVehicle;
+        Transaction transaction = null;
+        List < Vehicle > listOfVehicle = null;
         try (Session session = HibernateUtil.getSessionFactory().openSession()) {
+
+            transaction = session.beginTransaction();
 
             //get a list of Vehicle
             listOfVehicle = session.createQuery(" from Vehicle").getResultList();
 
+            transaction.commit();
+
+        }catch (Exception e) {
+            if (transaction != null) {
+                transaction.rollback();
+            }
+            e.printStackTrace();
         }
         return listOfVehicle;
     }

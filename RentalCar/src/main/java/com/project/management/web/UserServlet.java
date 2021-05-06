@@ -205,7 +205,6 @@ public class UserServlet extends HttpServlet {
             user.setTaxCode(request.getParameter("taxcode"));
         }
 
-        System.out.println(request.getParameter("birthday"));
         if ((request.getParameter("birthday")!="") || (request.getParameter("birthday")!=null) ){
             try {
                 Date date = new SimpleDateFormat("dd/MM/yyyy").parse(request.getParameter("birthday"));

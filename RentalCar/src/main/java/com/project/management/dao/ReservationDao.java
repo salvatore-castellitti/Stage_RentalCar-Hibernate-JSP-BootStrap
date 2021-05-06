@@ -100,14 +100,22 @@ public class ReservationDao {
     //return all Reservation from a specific user
     @SuppressWarnings("unchecked")
     public static List <Reservation> getAllReservation(int id) {
-
+        Transaction transaction = null;
         UserDao userDao = new UserDao();
         User user = userDao.getUser(id);
 
-        List < Reservation > listOfReservation;
+        List < Reservation > listOfReservation = null;
         try (Session session = HibernateUtil.getSessionFactory().openSession()) {
+            transaction = session.beginTransaction();
 
             listOfReservation = session.createQuery(" from Reservation R WHERE R.user = :user ").setParameter("user",user).getResultList();
+
+            transaction.commit();
+        }catch (Exception e) {
+            if (transaction != null) {
+                transaction.rollback();
+            }
+            e.printStackTrace();
         }
         return listOfReservation;
     }

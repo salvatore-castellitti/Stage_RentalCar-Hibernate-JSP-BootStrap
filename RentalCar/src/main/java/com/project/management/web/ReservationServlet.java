@@ -226,10 +226,5 @@ public class ReservationServlet extends HttpServlet {
             reservationDao.saveReservation(reservation);
         }
         response.sendRedirect("ReservationServlet");
-
-
-
-
-
     }
 }

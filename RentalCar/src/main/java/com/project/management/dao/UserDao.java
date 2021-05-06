@@ -150,12 +150,21 @@ public class UserDao {
     //return all CUSTOMER User, NOT ADMIN need to create one other of all?
     @SuppressWarnings("unchecked")
     public static List < User > getAllUser() {
+        Transaction transaction=null;
 
-        List < User > listOfUser;
+        List < User > listOfUser = null;
         try (Session session = HibernateUtil.getSessionFactory().openSession()) {
+            transaction = session.beginTransaction();
 
             listOfUser = session.createQuery(" from User U where U.role = false").getResultList();
 
+            transaction.commit();
+
+        }catch (Exception e) {
+            if (transaction != null) {
+                transaction.rollback();
+            }
+            e.printStackTrace();
         }
         return listOfUser;
     }

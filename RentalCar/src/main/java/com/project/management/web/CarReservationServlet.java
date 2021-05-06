@@ -124,6 +124,8 @@ public class CarReservationServlet extends HttpServlet {
         VehicleReservationDao deleteDao = new VehicleReservationDao();
         int carId = Integer.parseInt(request.getParameter("carId"));
         deleteDao.deleteVehicle(carId);
+        HttpSession session = request.getSession();
+        session.setAttribute("actionList","list");
         response.sendRedirect("CarReservationServlet");
     }
 
@@ -143,13 +145,14 @@ public class CarReservationServlet extends HttpServlet {
         session.setAttribute("actionList","list");
         VehicleReservationDao vehicleReservationDao = new VehicleReservationDao();
         Vehicle car = null;
-        if (request.getParameter("carID")!=null){
+        if (request.getParameter("carId")!=null){
             int id = Integer.parseInt(request.getParameter("carId"));
             car = vehicleReservationDao.getVehicle(id);
         }else{
             car = new Vehicle();
         }
 
+        System.out.println(car.getId());
 
         if (request.getParameter("type") != "")
             car.setType(request.getParameter("type"));
@@ -167,7 +170,7 @@ public class CarReservationServlet extends HttpServlet {
             car.setLicensePlate(request.getParameter("licenseplate"));
 
         if (request.getParameter("carId")!=null){
-            vehicleReservationDao.updateVehicle(car);
+            VehicleReservationDao.updateVehicle(car);
         }else{
             VehicleReservationDao.saveVehicle(car);
         }
